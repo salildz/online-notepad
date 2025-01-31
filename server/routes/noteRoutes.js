@@ -5,108 +5,103 @@ const Note = require("../models/Note");
 const User = require("../models/User");
 
 const router = express.Router();
-const SECRET_KEY = process.env.ENCRYPTION_SECRET; // Şifreleme için gizli anahtar
+const SECRET_KEY = process.env.ENCRYPTION_SECRET; // Secret key for encryption
 
-// Middleware: Kullanıcıyı JWT ile doğrula
+// Middleware to authenticate user
 const authenticateUser = (req, res, next) => {
   const token = req.header("Authorization");
-  if (!token) return res.status(401).json({ message: "Erişim reddedildi!" });
+  if (!token) return res.status(401).json({ message: "Access denied!" });
 
   try {
     const decoded = jwt.verify(token.replace("Bearer ", ""), process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(400).json({ message: "Geçersiz token!" });
+    res.status(400).json({ message: "Invalid token!" });
   }
 };
 
-// 🔐 Not Oluştur (Şifreli Kaydet)
+// Create a new note (encrypted)
 router.post("/add", authenticateUser, async (req, res) => {
-    try {
-      const { title, content } = req.body;
-      const userId = req.user.userId; // JWT'den gelen kullanıcı ID
-  
-      // Başlık ve içeriği AES-256 ile şifrele
-      const encryptedTitle = crypto.AES.encrypt(title, SECRET_KEY).toString();
-      const encryptedContent = crypto.AES.encrypt(content, SECRET_KEY).toString();
-  
-      const newNote = new Note({
-        userId,
-        title: encryptedTitle, // Şifrelenmiş başlık
-        encryptedContent,      // Şifrelenmiş içerik
-      });
-  
-      await newNote.save();
-      res.status(201).json({ message: "Not kaydedildi!" });
-    } catch (error) {
-      res.status(500).json({ message: "Sunucu hatası" });
-    }
-  });
-  
-  
+  try {
+    const { title, content } = req.body;
 
-// 🔓 Kullanıcının Sadece Kendi Notlarını Getir
+    const userId = req.user.userId; // User ID from JWT
+
+    // Encrypt title and content with AES-256
+    const encryptedTitle = crypto.AES.encrypt(title, SECRET_KEY).toString();
+    const encryptedContent = crypto.AES.encrypt(content, SECRET_KEY).toString();
+
+    const newNote = new Note({
+      userId,
+      encryptedTitle,
+      encryptedContent,
+    });
+
+    await newNote.save();
+    res.status(201).json({ message: "Note saved!" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get all notes of a user
 router.get("/", authenticateUser, async (req, res) => {
-    try {
-      const userId = req.user.userId;
-  
-      const notes = await Note.find({ userId });
-  
-      // Notların başlık ve içeriğini çözüyoruz
-      const decryptedNotes = notes.map((note) => ({
-        id: note._id,
-        title: crypto.AES.decrypt(note.title, SECRET_KEY).toString(crypto.enc.Utf8), // Başlık şifre çözme
-        content: crypto.AES.decrypt(note.encryptedContent, SECRET_KEY).toString(crypto.enc.Utf8), // İçerik şifre çözme
-        createdAt: note.createdAt,
-      }));
-  
-      res.json(decryptedNotes);
-    } catch (error) {
-      res.status(500).json({ message: "Sunucu hatası" });
-    }
-  });  
+  try {
+    const userId = req.user.userId; // User ID from JWT
+    const notes = await Note.find({ userId }); // Get all notes of the user from DB
 
-// ✏️ Not Güncelle
+    // Decrypt title and content of each note
+    const decryptedNotes = notes.map((note) => ({
+      id: note._id,
+      title: crypto.AES.decrypt(note.encryptedTitle, SECRET_KEY).toString(crypto.enc.Utf8),
+      content: crypto.AES.decrypt(note.encryptedContent, SECRET_KEY).toString(crypto.enc.Utf8),
+      createdAt: note.createdAt,
+    }));
+
+    res.json(decryptedNotes);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Update a note
 router.put("/:id", authenticateUser, async (req, res) => {
-    try {
-      const { title, content } = req.body;
-      const userId = req.user.userId;
-  
-      const note = await Note.findOne({ _id: req.params.id, userId });
-      if (!note) return res.status(403).json({ message: "Bu notu düzenleme yetkiniz yok!" });
-  
-      // Başlığı ve içeriği tekrar şifrele
-      const encryptedTitle = crypto.AES.encrypt(title, SECRET_KEY).toString();
-      const encryptedContent = crypto.AES.encrypt(content, SECRET_KEY).toString();
-  
-      note.title = encryptedTitle;
-      note.encryptedContent = encryptedContent;
-      await note.save();
-  
-      res.json({ message: "Not güncellendi!" });
-    } catch (error) {
-      res.status(500).json({ message: "Sunucu hatası" });
-    }
-  });  
-  
+  try {
+    const { title, content } = req.body;
 
-// ❌ Not Sil
+    const userId = req.user.userId; // User ID from JWT
+    const note = await Note.findOne({ _id: req.params.id, userId }); // Check if the note belongs to the user
+    if (!note) return res.status(403).json({ message: "You are not authorized to update this note!" });
+
+    // Encrypt title and content with AES-256
+    const encryptedTitle = crypto.AES.encrypt(title, SECRET_KEY).toString();
+    const encryptedContent = crypto.AES.encrypt(content, SECRET_KEY).toString();
+
+    note.encryptedTitle = encryptedTitle;
+    note.encryptedContent = encryptedContent;
+    await note.save();
+
+    res.json({ message: "Note updated!" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Delete a note
 router.delete("/:id", authenticateUser, async (req, res) => {
-    try {
-      const userId = req.user.userId;
-  
-      // Kullanıcının sahip olduğu not mu?
-      const note = await Note.findOne({ _id: req.params.id, userId });
-      if (!note) return res.status(403).json({ message: "Bu notu silme yetkiniz yok!" });
-  
-      await Note.deleteOne({ _id: req.params.id });
-  
-      res.json({ message: "Not silindi!" });
-    } catch (error) {
-      res.status(500).json({ message: "Sunucu hatası" });
-    }
-  });
-  
+  try {
+    const userId = req.user.userId; // User ID from JWT
+    const note = await Note.findOne({ _id: req.params.id, userId }); // Check if the note belongs to the user
+    if (!note) return res.status(403).json({ message: "You are not authorized to delete this note!" });
+
+    await Note.deleteOne({ _id: req.params.id });
+
+    res.json({ message: "Note deleted!" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;

@@ -1,18 +1,26 @@
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const LogoutButton = ({ setUser }) => {  // setUser burada geliyor!
+// LogoutButton component that takes setUser as a prop
+const LogoutButton = ({ setUser }) => {
   const navigate = useNavigate();
 
+  // Function to handle logout
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Token'ı temizle
-    setUser(null); // Kullanıcı bilgisini sıfırla
-    navigate("/login"); // Giriş sayfasına yönlendir
+    localStorage.removeItem("token"); // Clear the token from local storage
+    setUser(null); // Reset user information
+    navigate("/login"); // Redirect to the login page
   };
 
   return (
-    <Button variant="contained" color="error" onClick={handleLogout}>
-      Çıkış Yap
+    <Button 
+      size="medium" 
+      variant="contained" 
+      color="error" 
+      onClick={handleLogout}
+      sx={{ textTransform: 'none', fontWeight: 'bold' }} 
+    >
+      Logout
     </Button>
   );
 };
