@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Container, TextField, Button, Typography, IconButton, Box, Card, CardContent, CardActions, Grid } from "@mui/material";
+import { Container, TextField, Button, Typography, IconButton, Box, Card, CardContent, CardActions } from "@mui/material";
 import { Edit, Delete, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import axios from "axios";
+import { notes } from "./api"; // api.js'den notes'u import et
 import LogoutButton from "../components/LogoutButton";
 
 const NotesPage = ({ user, setUser }) => {
-  const [notes, setNotes] = useState([]);
+  const [notesList, setNotesList] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedNote, setSelectedNote] = useState(null);
@@ -16,10 +16,8 @@ const NotesPage = ({ user, setUser }) => {
 
   const fetchNotes = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/notes", {
-        headers: { Authorization: `Bearer ${user}` },
-      });
-      setNotes(res.data);
+      const res = await notes.fetchNotes(); // api.js'deki fetchNotes fonksiyonunu kullan
+      setNotesList(res.data);
     } catch (err) {
       console.error("Error fetching notes:", err);
     }
@@ -27,9 +25,7 @@ const NotesPage = ({ user, setUser }) => {
 
   const addNote = async () => {
     try {
-      await axios.post("http://localhost:5000/api/notes/add", { title, content }, {
-        headers: { Authorization: `Bearer ${user}` },
-      });
+      await notes.addNote(title, content); // api.js'deki addNote fonksiyonunu kullan
       setTitle("");
       setContent("");
       fetchNotes();
@@ -40,9 +36,7 @@ const NotesPage = ({ user, setUser }) => {
 
   const deleteNote = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/notes/${id}`, {
-        headers: { Authorization: `Bearer ${user}` },
-      });
+      await notes.deleteNote(id); // api.js'deki deleteNote fonksiyonunu kullan
       fetchNotes();
     } catch (err) {
       console.error("Error deleting note:", err);
@@ -51,9 +45,7 @@ const NotesPage = ({ user, setUser }) => {
 
   const updateNote = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/notes/${selectedNote.id}`, { title, content }, {
-        headers: { Authorization: `Bearer ${user}` },
-      });
+      await notes.updateNote(selectedNote.id, title, content); // api.js'deki updateNote fonksiyonunu kullan
       fetchNotes();
       setEditMode(false);
       setSelectedNote(null);
@@ -88,13 +80,11 @@ const NotesPage = ({ user, setUser }) => {
 
   return (
     <Container maxWidth="lg">
-      {/* Header */}
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 4, mb: 3 }}>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>Notes</Typography>
         <LogoutButton setUser={setUser} />
       </Box>
 
-      {/* Not Ekleme Alanı */}
       <Box sx={{ mb: 3, display: "flex", flexDirection: "column", gap: 2 }}>
         <TextField label="Title" fullWidth value={title} onChange={(e) => setTitle(e.target.value)} />
         <TextField label="Content" fullWidth multiline rows={4} value={content} onChange={(e) => setContent(e.target.value)} />
@@ -108,65 +98,37 @@ const NotesPage = ({ user, setUser }) => {
         )}
       </Box>
 
-      {/* Not Kartları */}
-      <Grid container spacing={3}>
-        {notes.map((note) => {
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+        {notesList.map((note) => {
           const isExpanded = expandedNoteId === note.id;
           return (
-            <Grid item xs={12} sm={6} md={4} key={note.id}>
-              <Card
-                sx={{
-                  boxShadow: 3,
-                  borderRadius: 3,
-                  transition: "all 0.3s",
-                  ":hover": { boxShadow: 6 },
-                  backgroundColor: theme.palette.background.paper,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  height: isExpanded ? "auto" : "250px",
-                  overflow: "hidden",
-                }}
-              >
-                <CardContent sx={{ padding: 3, cursor: "pointer" }} onClick={() => handleNoteClick(note.id)}>
-                  <Typography variant="h6" sx={{ fontWeight: "bold", color: theme.palette.primary.main }}>
-                    {note.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    sx={{
-                      whiteSpace: "pre-line",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: isExpanded ? "block" : "-webkit-box",
-                      WebkitBoxOrient: "vertical",
-                      WebkitLineClamp: isExpanded ? "unset" : "3",
-                      transition: "all 0.3s",
-                    }}
-                  >
-                    {note.content}
-                  </Typography>
-                </CardContent>
+            <Card key={note.id} sx={{ width: 300 }}>
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  {note.title}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {note.content}
+                </Typography>
+              </CardContent>
 
-                <CardActions sx={{ display: "flex", justifyContent: "space-between", paddingX: 2 }}>
-                  <Box>
-                    <IconButton onClick={() => handleEditClick(note)}>
-                      <Edit color="primary" />
-                    </IconButton>
-                    <IconButton onClick={() => deleteNote(note.id)}>
-                      <Delete color="error" />
-                    </IconButton>
-                  </Box>
-                  <IconButton onClick={() => handleNoteClick(note.id)}>
-                    {isExpanded ? <ExpandLess /> : <ExpandMore />}
+              <CardActions>
+                <Box>
+                  <IconButton onClick={() => handleEditClick(note)}>
+                    <Edit color="primary" />
                   </IconButton>
-                </CardActions>
-              </Card>
-            </Grid>
+                  <IconButton onClick={() => deleteNote(note.id)}>
+                    <Delete color="error" />
+                  </IconButton>
+                </Box>
+                <IconButton onClick={() => handleNoteClick(note.id)}>
+                  {isExpanded ? <ExpandLess /> : <ExpandMore />}
+                </IconButton>
+              </CardActions>
+            </Card>
           );
         })}
-      </Grid>
+      </Box>
     </Container>
   );
 };
