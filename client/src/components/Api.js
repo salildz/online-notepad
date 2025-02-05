@@ -1,12 +1,11 @@
-import React from 'react';
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL;
-
+// Create an Axios instance with a base URL
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: "http://localhost:5000/api", // Base URL for all API requests
 });
 
+// Add a request interceptor to include the token in headers
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -15,11 +14,13 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Auth API methods
 export const auth = {
   login: (email, password) => api.post("/auth/login", { email, password }),
+  register: (username, email, password) => api.post("/auth/register", { username, email, password }),
 };
 
-// Notes işlemleri
+// Notes API methods
 export const notes = {
   fetchNotes: () => api.get("/notes"),
   addNote: (title, content) => api.post("/notes/add", { title, content }),

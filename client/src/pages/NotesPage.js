@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Container, TextField, Button, Typography, IconButton, Box, Card, CardContent, CardActions } from "@mui/material";
 import { Edit, Delete, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import { notes } from "./api"; // api.js'den notes'u import et
+import { notes } from "../components/Api"; // api.js'den notes'u import et
 import LogoutButton from "../components/LogoutButton";
 
 const NotesPage = ({ user, setUser }) => {
