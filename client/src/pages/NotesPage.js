@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, TextField, Button, Typography, IconButton, Box, Card, CardContent, CardActions } from "@mui/material";
+import { Container, TextField, Button, Typography, IconButton, Box, Card, CardContent, CardActions, Grid2 } from "@mui/material";
 import { Edit, Delete, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { notes } from "../components/Api"; // api.js'den notes'u import et
@@ -36,7 +36,7 @@ const NotesPage = ({ user, setUser }) => {
 
   const deleteNote = async (id) => {
     try {
-      await notes.deleteNote(id); // api.js'deki deleteNote fonksiyonunu kullan
+      await notes.deleteNote(id);
       fetchNotes();
     } catch (err) {
       console.error("Error deleting note:", err);
@@ -98,38 +98,49 @@ const NotesPage = ({ user, setUser }) => {
         )}
       </Box>
 
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+      <Grid2 container spacing={5}
+        sx={{
+          flexDirection: "center",
+        }}>
         {notesList.map((note) => {
           const isExpanded = expandedNoteId === note.id;
           return (
-            <Card key={note.id} sx={{ width: 300 }}>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  {note.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {note.content}
-                </Typography>
-              </CardContent>
+            <Grid2 sx={{ height: "auto" }} size={{ xs: 12, sm: 6, md: 4 }} key={note.id}>
+              <Card sx={{ height: "auto", borderRadius: 3 }}
+                raised
+              >
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="h6" noWrap={!isExpanded} sx={{ fontWeight: "bold", wordBreak: "break-word" }} >
+                    {note.title}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" noWrap={!isExpanded} sx={{ wordBreak: "break-word" }}>
+                    {note.content}
+                  </Typography>
+                </CardContent>
 
-              <CardActions>
-                <Box>
-                  <IconButton onClick={() => handleEditClick(note)}>
-                    <Edit color="primary" />
-                  </IconButton>
-                  <IconButton onClick={() => deleteNote(note.id)}>
-                    <Delete color="error" />
-                  </IconButton>
-                </Box>
-                <IconButton onClick={() => handleNoteClick(note.id)}>
-                  {isExpanded ? <ExpandLess /> : <ExpandMore />}
-                </IconButton>
-              </CardActions>
-            </Card>
+                <CardActions>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <Box>
+                      <IconButton onClick={() => handleEditClick(note)}>
+                        <Edit color="primary" />
+                      </IconButton>
+                      <IconButton onClick={() => deleteNote(note.id)}>
+                        <Delete color="error" />
+                      </IconButton>
+                    </Box>
+
+                    <IconButton onClick={() => handleNoteClick(note.id)}>
+                      {isExpanded ? <ExpandLess /> : <ExpandMore />}
+                    </IconButton>
+                  </Box>
+                </CardActions>
+              </Card>
+            </Grid2>
           );
         })}
-      </Box>
-    </Container>
+      </Grid2>
+
+    </Container >
   );
 };
 
