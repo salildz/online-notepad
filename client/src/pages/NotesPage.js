@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, TextField, Button, Typography, IconButton, Box, Card, CardContent, CardActions, Grid2 } from "@mui/material";
+import { Container, TextField, Button, Typography, IconButton, Box, Card, CardContent, CardActions, Collapse, Grid2 } from "@mui/material";
 import { Edit, Delete, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { notes } from "../components/Api"; // api.js'den notes'u import et
@@ -61,6 +61,7 @@ const NotesPage = ({ user, setUser }) => {
     setTitle(note.title);
     setContent(note.content);
     setSelectedNote(note);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCancel = () => {
@@ -98,40 +99,62 @@ const NotesPage = ({ user, setUser }) => {
         )}
       </Box>
 
-      <Grid2 container spacing={5}
+      <Grid2 container spacing={3}
         sx={{
           flexDirection: "center",
         }}>
         {notesList.map((note) => {
           const isExpanded = expandedNoteId === note.id;
+          const shouldShowExpandButton = note.content.length > 25 || note.title.length > 17;
           return (
             <Grid2 sx={{ height: "auto" }} size={{ xs: 12, sm: 6, md: 4 }} key={note.id}>
               <Card sx={{ height: "auto", borderRadius: 3 }}
                 raised
               >
                 <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" noWrap={!isExpanded} sx={{ fontWeight: "bold", wordBreak: "break-word" }} >
+                  <Typography variant="h6" noWrap={!isExpanded} color="primary" sx={{ fontWeight: "bold", wordBreak: "break-word" }} >
                     {note.title}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary" noWrap={!isExpanded} sx={{ wordBreak: "break-word" }}>
-                    {note.content}
-                  </Typography>
+                  <Collapse
+                    in={isExpanded}
+                    collapsedSize={20}         // How many pixels tall when collapsed
+                    timeout={600}             // Duration of the expand/collapse transition
+                  >
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      noWrap={!isExpanded}
+                      sx={{
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {note.content}
+                    </Typography>
+                  </Collapse>
                 </CardContent>
 
                 <CardActions>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                     <Box>
                       <IconButton onClick={() => handleEditClick(note)}>
-                        <Edit color="primary" />
+                        <Edit color="grey" sx={{
+                          '&:hover': {
+                            color: theme.palette.success[theme.palette.mode],
+                          },
+                        }} />
                       </IconButton>
                       <IconButton onClick={() => deleteNote(note.id)}>
-                        <Delete color="error" />
+                        <Delete color="grey" sx={{
+                          '&:hover': {
+                            color: theme.palette.error[theme.palette.mode],
+                          },
+                        }} />
                       </IconButton>
                     </Box>
 
-                    <IconButton onClick={() => handleNoteClick(note.id)}>
+                    {shouldShowExpandButton && (<IconButton onClick={() => handleNoteClick(note.id)}>
                       {isExpanded ? <ExpandLess /> : <ExpandMore />}
-                    </IconButton>
+                    </IconButton>)}
                   </Box>
                 </CardActions>
               </Card>
