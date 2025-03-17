@@ -1,57 +1,18 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-
 const router = express.Router();
+const rateLimit = require("express-rate-limit");
+const { registerUser, loginUser, refreshToken, logoutUser } = require("../controllers/authController.js");
 
-// User Registration
-router.post("/register", async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "This email is already registered!" });
-    }
-
-    // Create new user
-    const newUser = new User({ username, email, password });
-    await newUser.save();
-
-    res.status(201).json({ message: "Registration successful!" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
+const loginLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000,
+    max: 10,
+    messsage: "Too many login attempts. Please try again after 5 minutes."
 });
 
-// User Login
-router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Check if user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
-
-    // Validate password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
-
-    // Create JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.post("/register", registerUser);
+router.post("/login", loginLimiter, loginUser);
+router.post("/refresh-token", refreshToken);
+router.post("/logout", logoutUser);
 
 module.exports = router;
