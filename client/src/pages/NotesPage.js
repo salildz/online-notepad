@@ -2,22 +2,22 @@ import { useState, useEffect } from "react";
 import { Container, TextField, Button, Typography, IconButton, Box, Card, CardContent, CardActions, Collapse, Grid2 } from "@mui/material";
 import { Edit, Delete, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import { notes } from "../components/Api"; // api.js'den notes'u import et
+import { getNotes, updateNotes } from "../components/Api";
 import LogoutButton from "../components/LogoutButton";
 
-const NotesPage = ({ user, setUser }) => {
+const NotesPage = () => {
   const [notesList, setNotesList] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedNote, setSelectedNote] = useState(null);
-  const [expandedNoteId, setExpandedNoteId] = useState(null);
+  const [expandedNoteTitle, setExpandedNoteTitle] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const theme = useTheme();
 
   const fetchNotes = async () => {
     try {
-      const res = await notes.fetchNotes(); // api.js'deki fetchNotes fonksiyonunu kullan
-      setNotesList(res.data);
+      const notes = await getNotes();
+      setNotesList(notes);
     } catch (err) {
       console.error("Error fetching notes:", err);
     }
@@ -25,19 +25,25 @@ const NotesPage = ({ user, setUser }) => {
 
   const addNote = async () => {
     try {
-      await notes.addNote(title, content); // api.js'deki addNote fonksiyonunu kullan
+      //await notes.addNote(title, content); // api.js'deki addNote fonksiyonunu kullan
+      //fetchNotes();
+      const isNoteExisting = notesList.find((note) => note.title === title);
+      if (isNoteExisting) {
+        return;
+      };
+      updateNotes({ notes: [...notesList, { title, content }] });
+      fetchNotes();
       setTitle("");
       setContent("");
-      fetchNotes();
     } catch (err) {
       console.error("Error adding note:", err);
     }
   };
 
-  const deleteNote = async (id) => {
+  const deleteNote = async (title) => {
     try {
-      await notes.deleteNote(id);
-      fetchNotes();
+      //await notes.deleteNote(id);
+      //fetchNotes();
     } catch (err) {
       console.error("Error deleting note:", err);
     }
@@ -45,8 +51,8 @@ const NotesPage = ({ user, setUser }) => {
 
   const updateNote = async () => {
     try {
-      await notes.updateNote(selectedNote.id, title, content); // api.js'deki updateNote fonksiyonunu kullan
-      fetchNotes();
+      //await notes.updateNote(selectedNote.id, title, content); // api.js'deki updateNote fonksiyonunu kullan
+      //fetchNotes();
       setEditMode(false);
       setSelectedNote(null);
       setTitle('');
@@ -71,8 +77,8 @@ const NotesPage = ({ user, setUser }) => {
     setSelectedNote(null);
   };
 
-  const handleNoteClick = (noteId) => {
-    setExpandedNoteId(expandedNoteId === noteId ? null : noteId);
+  const handleNoteClick = (noteTitle) => {
+    setExpandedNoteTitle(expandedNoteTitle === noteTitle ? null : noteTitle);
   };
 
   useEffect(() => {
@@ -83,7 +89,7 @@ const NotesPage = ({ user, setUser }) => {
     <Container maxWidth="lg">
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 4, mb: 3 }}>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>Notes</Typography>
-        <LogoutButton setUser={setUser} />
+        <LogoutButton />
       </Box>
 
       <Box sx={{ mb: 3, display: "flex", flexDirection: "column", gap: 2 }}>
@@ -104,10 +110,10 @@ const NotesPage = ({ user, setUser }) => {
           flexDirection: "center",
         }}>
         {notesList.map((note) => {
-          const isExpanded = expandedNoteId === note.id;
+          const isExpanded = expandedNoteTitle === note.title;
           const shouldShowExpandButton = note.content.length > 25 || note.title.length > 17;
           return (
-            <Grid2 sx={{ height: "auto" }} size={{ xs: 12, sm: 6, md: 4 }} key={note.id}>
+            <Grid2 sx={{ height: "auto" }} size={{ xs: 12, sm: 6, md: 4 }} key={note.title}>
               <Card sx={{ height: "auto", borderRadius: 3 }}
                 raised
               >
@@ -143,7 +149,7 @@ const NotesPage = ({ user, setUser }) => {
                           },
                         }} />
                       </IconButton>
-                      <IconButton onClick={() => deleteNote(note.id)}>
+                      <IconButton onClick={() => deleteNote(note.title)}>
                         <Delete color="grey" sx={{
                           '&:hover': {
                             color: theme.palette.error[theme.palette.mode],
@@ -152,7 +158,7 @@ const NotesPage = ({ user, setUser }) => {
                       </IconButton>
                     </Box>
 
-                    {shouldShowExpandButton && (<IconButton onClick={() => handleNoteClick(note.id)}>
+                    {shouldShowExpandButton && (<IconButton onClick={() => handleNoteClick(note.title)}>
                       {isExpanded ? <ExpandLess /> : <ExpandMore />}
                     </IconButton>)}
                   </Box>

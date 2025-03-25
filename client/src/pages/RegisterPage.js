@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../components/Api"; // api.js'den auth'u import et
+import { registerUser } from "../components/Api";
 
 const RegisterPage = () => {
   const [username, setUsername] = useState("");
@@ -12,8 +12,8 @@ const RegisterPage = () => {
 
   const handleRegister = async () => {
     try {
-      await auth.register(username, email, password); // api.js'deki register fonksiyonunu kullan
-      navigate("/login"); // Kayıt başarılı olursa giriş sayfasına yönlendir
+      await registerUser(username, email, password);
+      navigate("/login");
     } catch (err) {
       setError("Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.");
     }
