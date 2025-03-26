@@ -26,7 +26,7 @@ const LoginPage = () => {
     <Container maxWidth="xs">
       <Box sx={{ mt: 8, display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Typography variant="h5">Giriş Yap</Typography>
-        <TextField label="E-posta" fullWidth margin="normal" value={identifier} onChange={(e) => setIdentifier(e.target.value)} />
+        <TextField label="E-posta veya Kullanıcı Adı" fullWidth margin="normal" value={identifier} onChange={(e) => setIdentifier(e.target.value)} />
         <TextField label="Şifre" type="password" fullWidth margin="normal" value={password} onChange={(e) => setPassword(e.target.value)} />
         {error && <Typography color="error">{error}</Typography>}
         <Button variant="contained" fullWidth sx={{ mt: 2 }} onClick={handleLogin}>Giriş Yap</Button>

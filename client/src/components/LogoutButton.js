@@ -1,15 +1,24 @@
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "./Api";
+import { useAuth } from "./AuthContext";
 
-// LogoutButton component that takes setUser as a prop
 const LogoutButton = () => {
   const navigate = useNavigate();
+  const { clearToken } = useAuth();
 
   // Function to handle logout
-  const handleLogout = () => {
-    logoutUser();
-    //navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      clearToken(); // AuthContext'ten clearToken fonksiyonunu çağır
+      navigate("/login"); // Login sayfasına yönlendir
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Hata olsa bile token'ı temizle ve login sayfasına yönlendir
+      clearToken();
+      navigate("/login");
+    }
   };
 
   return (

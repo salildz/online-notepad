@@ -7,43 +7,69 @@ export const AuthProvider = ({ children }) => {
     const [token, setTokenState] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const setToken = (newToken) => {
+        if (newToken) {
+            localStorage.setItem('accessToken', newToken);
+            setTokenState(newToken);
+            setAxiosToken(newToken);
+        } else {
+            localStorage.removeItem('accessToken');
+            setTokenState(null);
+            setAxiosToken(null);
+        }
+    };
+
     useEffect(() => {
-        // If we are on the login page, we don't need to check the token.
-        if (window.location.pathname === "/login") {
+        // No need to check token on login page
+        if (window.location.pathname === "/login" || window.location.pathname === "/register") {
             setIsLoading(false);
             return;
         }
-        // Check the token
+
+        // Token check
         const checkToken = async () => {
             try {
+                // Check if token is stored in local storage
+                const storedToken = localStorage.getItem('accessToken');
+
+                if (storedToken) {
+                    setTokenState(storedToken);
+                    setAxiosToken(storedToken);
+                    setIsLoading(false);
+                    return;
+                }
+
+                // If token is not stored in local storage, try to refresh it
                 const newToken = await refreshAccessToken();
                 if (newToken) {
-                    setTokenState(newToken);
-                    setAxiosToken(newToken);
+                    setToken(newToken);
+                } else {
+                    // If token cannot be refreshed, clear the token
+                    setToken(null);
+                    if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
+                        window.location.href = "/login";
+                    }
                 }
             } catch (err) {
-                console.error("Error while refreshing token:", err);
+                console.error("Token yenileme hatası:", err);
+                setToken(null);
             } finally {
                 setIsLoading(false);
             }
         };
+
         checkToken();
     }, []);
 
-    const setToken = (newToken) => {
-        setTokenState(newToken);
-        setAxiosToken(newToken);
-    };
-
     const clearToken = async () => {
         try {
-            await logoutUser(); // Remove the token from the server
+            await logoutUser();
         } catch (error) {
-            console.error("Logout error:", error);
+            console.error("Çıkış hatası:", error);
+        } finally {
+            setToken(null);
+            window.location.href = "/login";
         }
-        setTokenState(null);
-        setAxiosToken(null);
-        window.location.href = "/login";
     };
 
     return (
