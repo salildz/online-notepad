@@ -17,7 +17,7 @@ const RootRedirect = () => {
 
     // If the token exists, redirect to the notes page
     if (token) {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/note" replace />;
     } else {
         return <Navigate to="/login" replace />;
     }

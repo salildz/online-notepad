@@ -151,23 +151,43 @@ export const registerUser = async (username, email, password) => {
   }
 };
 
+// NOTES //
+
 // Get notes
 export const getNotes = async () => {
   try {
     const response = await api.get("/note");
-    return response.data.notes;
+    return response.data.notes || []; // response.data.notes dizisini döndür veya boş dizi
   } catch (error) {
     console.error("Get notes error:", error.response?.data?.message || error.message);
     throw error;
   }
 };
 
-// Update notes
-export const updateNotes = async (noteData) => {
+export const addNote = async (title, content) => {
   try {
-    await api.put(`/note`, noteData);
+    await api.post(`/note`, { title, content });
   } catch (error) {
-    console.error("Update notes error:", error.response?.data?.message || error.message);
+    console.error("Add note error:", error.response?.data?.message || error.message);
+    throw error;
+  }
+}
+
+// Update notes
+export const updateNote = async (id, title, content) => {
+  try {
+    await api.put(`/note`, { id, title, content });
+  } catch (error) {
+    console.error("Update note error:", error.response?.data?.message || error.message);
+    throw error;
+  }
+};
+
+export const deleteNote = async (id) => {
+  try {
+    await api.delete(`/note/${id}`);
+  } catch (error) {
+    console.error("Delete note error:", error.response?.data?.message || error.message);
     throw error;
   }
 };

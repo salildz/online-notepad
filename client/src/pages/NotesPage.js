@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Container, TextField, Button, Typography, IconButton, Box, Card, CardContent, CardActions, Collapse, Grid2 } from "@mui/material";
 import { Edit, Delete, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import { getNotes, updateNotes } from "../components/Api";
+import { getNotes as apiGetNotes, addNote as apiAddNote, deleteNote as apiDeleteNote, updateNote as apiUpdateNote } from "../components/Api";
 import LogoutButton from "../components/LogoutButton";
 
 const NotesPage = () => {
@@ -10,13 +10,14 @@ const NotesPage = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedNote, setSelectedNote] = useState(null);
-  const [expandedNoteTitle, setExpandedNoteTitle] = useState(null);
+  const [expandedNoteId, setExpandedNoteId] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const theme = useTheme();
 
   const fetchNotes = async () => {
     try {
-      const notes = await getNotes();
+      const notes = await apiGetNotes();
+      console.log(notes);
       setNotesList(notes);
     } catch (err) {
       console.error("Error fetching notes:", err);
@@ -25,13 +26,16 @@ const NotesPage = () => {
 
   const addNote = async () => {
     try {
-      //await notes.addNote(title, content); // api.js'deki addNote fonksiyonunu kullan
-      //fetchNotes();
+      if (!title || !content) {
+        return;
+      }
+
       const isNoteExisting = notesList.find((note) => note.title === title);
       if (isNoteExisting) {
         return;
-      };
-      updateNotes({ notes: [...notesList, { title, content }] });
+      }
+
+      await apiAddNote(title, content);
       fetchNotes();
       setTitle("");
       setContent("");
@@ -40,25 +44,36 @@ const NotesPage = () => {
     }
   };
 
-  const deleteNote = async (title) => {
+  const deleteNote = async (id) => {
     try {
-      //await notes.deleteNote(id);
-      //fetchNotes();
+      console.log("Silme işlemi için not ID:", id);
+      await apiDeleteNote(id);
+      console.log("Silme başarılı, notları yeniliyorum");
+      fetchNotes();
     } catch (err) {
-      console.error("Error deleting note:", err);
+      console.error("Silme hatası:", err);
     }
   };
 
+  // Güncelleme işlemi için debugging
   const updateNote = async () => {
     try {
-      //await notes.updateNote(selectedNote.id, title, content); // api.js'deki updateNote fonksiyonunu kullan
-      //fetchNotes();
+      console.log("Güncelleme verisi:", { id: selectedNote?.id, title, content });
+
+      if (!selectedNote || !title || !content) {
+        console.warn("Eksik veri, güncelleme yapılmıyor");
+        return;
+      }
+
+      await apiUpdateNote(selectedNote.id, title, content);
+      console.log("Güncelleme başarılı, notları yeniliyorum");
+      fetchNotes();
       setEditMode(false);
       setSelectedNote(null);
       setTitle('');
       setContent('');
     } catch (err) {
-      console.error("Error updating note:", err);
+      console.error("Güncelleme hatası:", err);
     }
   };
 
@@ -77,8 +92,8 @@ const NotesPage = () => {
     setSelectedNote(null);
   };
 
-  const handleNoteClick = (noteTitle) => {
-    setExpandedNoteTitle(expandedNoteTitle === noteTitle ? null : noteTitle);
+  const handleNoteClick = (noteId) => {
+    setExpandedNoteId(expandedNoteId === noteId ? null : noteId);
   };
 
   useEffect(() => {
@@ -110,10 +125,10 @@ const NotesPage = () => {
           flexDirection: "center",
         }}>
         {notesList.map((note) => {
-          const isExpanded = expandedNoteTitle === note.title;
+          const isExpanded = expandedNoteId === note.id;
           const shouldShowExpandButton = note.content.length > 25 || note.title.length > 17;
           return (
-            <Grid2 sx={{ height: "auto" }} size={{ xs: 12, sm: 6, md: 4 }} key={note.title}>
+            <Grid2 sx={{ height: "auto" }} size={{ xs: 12, sm: 6, md: 4 }} key={note.id}>
               <Card sx={{ height: "auto", borderRadius: 3 }}
                 raised
               >
@@ -123,8 +138,8 @@ const NotesPage = () => {
                   </Typography>
                   <Collapse
                     in={isExpanded}
-                    collapsedSize={20}         // How many pixels tall when collapsed
-                    timeout={600}             // Duration of the expand/collapse transition
+                    collapsedSize={20}
+                    timeout={600}
                   >
                     <Typography
                       variant="body2"
@@ -149,7 +164,7 @@ const NotesPage = () => {
                           },
                         }} />
                       </IconButton>
-                      <IconButton onClick={() => deleteNote(note.title)}>
+                      <IconButton onClick={() => deleteNote(note.id)}>
                         <Delete color="grey" sx={{
                           '&:hover': {
                             color: theme.palette.error[theme.palette.mode],
@@ -158,7 +173,7 @@ const NotesPage = () => {
                       </IconButton>
                     </Box>
 
-                    {shouldShowExpandButton && (<IconButton onClick={() => handleNoteClick(note.title)}>
+                    {shouldShowExpandButton && (<IconButton onClick={() => handleNoteClick(note.id)}>
                       {isExpanded ? <ExpandLess /> : <ExpandMore />}
                     </IconButton>)}
                   </Box>
@@ -168,8 +183,7 @@ const NotesPage = () => {
           );
         })}
       </Grid2>
-
-    </Container >
+    </Container>
   );
 };
 
