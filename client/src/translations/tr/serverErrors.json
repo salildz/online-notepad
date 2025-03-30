@@ -1,0 +1,22 @@
+{
+  "auth": {
+    "invalidCredentials": "Geçersiz bilgiler. Lütfen kullanıcı adınızı/e-postanızı ve şifrenizi kontrol edin.",
+    "userExists": "Bu kullanıcı adı veya e-posta ile kayıtlı bir kullanıcı zaten var.",
+    "registrationFailed": "Kayıt işlemi başarısız oldu. Lütfen tekrar deneyin.",
+    "loginFailed": "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.",
+    "tokenExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
+    "unauthorized": "Yetkisiz erişim. Lütfen tekrar giriş yapın."
+  },
+  "notes": {
+    "notFound": "Notlar bulunamadı!",
+    "addFailed": "Not eklenemedi. Lütfen tekrar deneyin.",
+    "updateFailed": "Not güncellenemedi. Lütfen tekrar deneyin.",
+    "deleteFailed": "Not silinemedi. Lütfen tekrar deneyin.",
+    "invalidData": "Geçersiz not verisi. Lütfen alanları kontrol edin.",
+    "fetchingFailed": "Notlar alınamadı. Lütfen sayfayı yenileyin."
+  },
+  "server": {
+    "internalError": "Sunucu hatası. Lütfen daha sonra tekrar deneyin.",
+    "connectionError": "Sunucuya bağlanırken hata oluştu. Lütfen internet bağlantınızı kontrol edin."
+  }
+}

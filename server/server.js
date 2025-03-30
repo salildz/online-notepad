@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
@@ -63,9 +63,7 @@ app.use((req, res, next) => {
 });
 
 // CORS configuration
-const allowedOrigins = process.env.NODE_ENV === "production"
-  ? [process.env.FRONTEND_URL || "https://online-notepad.yildizsalih.net"]
-  : ["http://localhost:3000"];
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 
 console.log("Allowed origins:", allowedOrigins);
 
@@ -74,7 +72,7 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps, curl, etc)
     if (!origin) return callback(null, true);
 
-    if (allowedOrigins.indexOf(origin) === -1) {
+    if (process.env.NODE_ENV !== "development" && allowedOrigins.indexOf(origin) === -1) {
       const msg = "The CORS policy for this site does not allow access from the specified Origin.";
       return callback(new Error(msg), false);
     }
@@ -127,7 +125,7 @@ app.get("/", (req, res) => {
 });
 
 // Start Server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.BACKEND_PORT || 6001;
 const server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}!`));
 
 // Graceful shutdown

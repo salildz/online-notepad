@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const Note = require('../models/note');
+const Note = require('../models/Note');
 const { Op } = require('sequelize');
 
 // Validate Registration - Check if username, email and password are valid

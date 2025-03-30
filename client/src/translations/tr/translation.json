@@ -1,0 +1,41 @@
+{
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "add": "Ekle",
+    "login": "Giriş Yap",
+    "logout": "Çıkış Yap",
+    "register": "Kayıt Ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "username": "Kullanıcı Adı",
+    "title": "Başlık",
+    "content": "İçerik"
+  },
+  "auth": {
+    "login": "Giriş Yap",
+    "loginTitle": "Hesabınıza giriş yapın",
+    "username": "Kullanıcı Adı",
+    "email": "E-posta",
+    "emailOrUsername": "E-posta veya Kullanıcı Adı",
+    "password": "Şifre",
+    "dontHaveAccount": "Hesabın yok mu?",
+    "register": "Kayıt Ol",
+    "registerTitle": "Hesap oluştur",
+    "alreadyHaveAccount": "Zaten hesabın var mı?"
+  },
+  "notes": {
+    "title": "Notlar",
+    "addNote": "Not Ekle",
+    "saveNote": "Notu Kaydet",
+    "noNotes": "Henüz not yok. İlk notunu oluştur!"
+  },
+  "errors": {
+    "required": "Bu alan zorunludur",
+    "invalidEmail": "Geçersiz e-posta formatı",
+    "passwordLength": "Şifre en az 6 karakter olmalıdır",
+    "usernameLength": "Kullanıcı adı 3-30 karakter arasında olmalıdır"
+  }
+}

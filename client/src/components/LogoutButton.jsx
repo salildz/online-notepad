@@ -2,8 +2,10 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "./Api";
 import { useAuth } from "./AuthContext";
+import { useTranslation } from "../../node_modules/react-i18next";
 
 const LogoutButton = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { clearToken } = useAuth();
 
@@ -11,11 +13,9 @@ const LogoutButton = () => {
   const handleLogout = async () => {
     try {
       await logoutUser();
-      clearToken(); // AuthContext'ten clearToken fonksiyonunu çağır
-      navigate("/login"); // Login sayfasına yönlendir
+      clearToken();
+      navigate("/login");
     } catch (error) {
-      console.error("Logout error:", error);
-      // Hata olsa bile token'ı temizle ve login sayfasına yönlendir
       clearToken();
       navigate("/login");
     }
@@ -27,9 +27,9 @@ const LogoutButton = () => {
       variant="contained"
       color="error"
       onClick={handleLogout}
-      sx={{ textTransform: 'none', fontWeight: 'bold' }}
+      sx={{ textTransform: "none", fontWeight: "bold" }}
     >
-      Logout
+      {t("common.logout")}
     </Button>
   );
 };

@@ -1,0 +1,41 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username",
+    "title": "Title",
+    "content": "Content"
+  },
+  "auth": {
+    "login": "Login",
+    "loginTitle": "Login to your account",
+    "username": "Username",
+    "email": "Email",
+    "emailOrUsername": "Email or Username",
+    "password": "Password",
+    "dontHaveAccount": "Don't have an account?",
+    "register": "Register",
+    "registerTitle": "Create an account",
+    "alreadyHaveAccount": "Already have an account?"
+  },
+  "notes": {
+    "title": "Notes",
+    "addNote": "Add Note",
+    "saveNote": "Save Note",
+    "noNotes": "No notes yet. Create your first note!"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email format",
+    "passwordLength": "Password must be at least 6 characters",
+    "usernameLength": "Username must be between 3-30 characters"
+  }
+}

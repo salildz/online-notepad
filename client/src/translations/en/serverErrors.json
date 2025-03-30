@@ -1,0 +1,22 @@
+{
+  "auth": {
+    "invalidCredentials": "Invalid credentials. Please check your username/email and password.",
+    "userExists": "User already exists with this username or email.",
+    "registrationFailed": "Registration failed. Please try again.",
+    "loginFailed": "Login failed. Please check your credentials.",
+    "tokenExpired": "Your session has expired. Please login again.",
+    "unauthorized": "Unauthorized access. Please login again."
+  },
+  "notes": {
+    "notFound": "Notes not found!",
+    "addFailed": "Failed to add note. Please try again.",
+    "updateFailed": "Failed to update note. Please try again.",
+    "deleteFailed": "Failed to delete note. Please try again.",
+    "invalidData": "Invalid note data. Please check the fields.",
+    "fetchingFailed": "Failed to fetch notes. Please refresh the page."
+  },
+  "server": {
+    "internalError": "Server error. Please try again later.",
+    "connectionError": "Error connecting to server. Please check your internet connection."
+  }
+}

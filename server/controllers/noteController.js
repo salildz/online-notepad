@@ -1,4 +1,4 @@
-const Note = require('../models/note');
+const Note = require('../models/Note');
 const { v4: uuidv4 } = require('uuid');
 
 exports.getNotes = async (req, res) => {
@@ -95,6 +95,7 @@ exports.updateNote = async (req, res) => {
             updatedAt: new Date().toISOString()
         };
 
+        userNote.changed('noteData', true);
         await userNote.save();
         res.status(200).json({ message: "Note updated successfully" });
     } catch (error) {
@@ -126,14 +127,15 @@ exports.deleteNote = async (req, res) => {
         userNote.noteData.notes = userNote.noteData.notes.filter(note => note.id !== id);
 
         const newCount = userNote.noteData.notes.length;
-        console.log(`Notes before: ${initialCount}, after: ${newCount}, deleted: ${initialCount - newCount}`);
 
         if (initialCount === newCount) {
             return res.status(404).json({ message: "Note not found with ID: " + id });
         }
 
         // Değişiklikleri kaydet
+        userNote.changed('noteData', true);
         await userNote.save();
+        console.log("Note deleted successfully");
         res.status(200).json({ message: "Note deleted successfully" });
     } catch (error) {
         console.error("Delete note error:", error);
