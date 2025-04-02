@@ -30,12 +30,21 @@ const LoginPage = () => {
   };
 
   return (
-    <Container maxWidth="xs">
-      <Box sx={{ mt: 8, display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <Container maxWidth="sm">
+      <Box
+        sx={{
+          mt: 8,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+        }}
+      >
         <Typography
-          variant="h5"
+          variant="h3"
           fontWeight="bold"
-          mb={1}
+          mb={10}
+          textTransform="capitalize"
         >
           {t("auth.loginTitle")}
         </Typography>
