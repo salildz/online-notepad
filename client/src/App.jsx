@@ -44,11 +44,11 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <LanguageToggle />
             <DarkLightToggle
               mode={mode}
               toggleMode={toggleMode}
             />
-            <LanguageToggle />
           </Box>
           <Router>
             <Routes>

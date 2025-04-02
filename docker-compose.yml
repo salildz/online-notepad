@@ -4,11 +4,12 @@ services:
     image: postgres:16-alpine
     restart: always
     ports:
-      - "6002:5432"
+      - "9002:9002"
     environment:
       POSTGRES_USER: 
       POSTGRES_PASSWORD: 
       POSTGRES_DB: 
+      PGPORT: 9002
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -20,7 +21,7 @@ services:
   server:
     build: ./server
     ports:
-      - "6001:6001"
+      - "9001:9001"
     volumes:
       - ./server:/app
       - /app/node_modules
@@ -33,7 +34,7 @@ services:
   client:
     build: ./client
     ports:
-      - "6000:6000"
+      - "9000:9000"
     volumes:
       - ./client:/app
       - /app/node_modules

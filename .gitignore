@@ -132,3 +132,4 @@ dist
 # Docker & docker-compose overrides
 docker-compose.override.yml
 docker-compose.*.override.yml
+salih.txt

@@ -6,9 +6,10 @@ export default defineConfig({
   plugins: [react()],
   envDir: '../env',
   server: {
+    port: 9000,
     proxy: {
       '/api': {
-        target: 'http://server:6001',
+        target: 'http://server:9001',
         /*         changeOrigin: true,
                 secure: false,
                 ws: true, */

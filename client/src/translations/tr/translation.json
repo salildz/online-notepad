@@ -16,7 +16,7 @@
   },
   "auth": {
     "login": "Giriş Yap",
-    "loginTitle": "Hesabınıza giriş yapın",
+    "loginTitle": "Hesabına giriş yap",
     "username": "Kullanıcı Adı",
     "email": "E-posta",
     "emailOrUsername": "E-posta veya Kullanıcı Adı",
