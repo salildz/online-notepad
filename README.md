@@ -14,7 +14,7 @@ A secure, modern full-stack web application for creating, editing, and managing 
 
 ## **🖼️ Screenshots**
 
-<table> <tr> <td><img src="https://via.placeholder.com/400x200?text=Login+Screen" alt="Login Screen" /></td> <td><img src="https://via.placeholder.com/400x200?text=Notes+Dashboard" alt="Notes Dashboard" /></td> </tr> <tr> <td><img src="https://via.placeholder.com/400x200?text=Dark+Mode" alt="Dark Mode" /></td> <td><img src="https://via.placeholder.com/400x200?text=Mobile+View" alt="Mobile View" /></td> </tr> </table>
+<table> <tr> <td><img src="https://github.com/salildz/online-notepad/blob/main/readmePics/login.png" alt= "Login Page"/></td> <td><img src="https://github.com/salildz/online-notepad/blob/main/readmePics/register.png" alt="Register Page" /></td> </tr> <tr> <td><img src="https://github.com/salildz/online-notepad/blob/main/readmePics/noNotes.png" alt="Note Page" /></td> <td><img src="https://github.com/salildz/online-notepad/blob/main/readmePics/4NotesEnglish.png" alt="Note Page" /></td> </tr> </table>
 
 ## **🛠️ Tech Stack**
 ### Frontend:
@@ -26,7 +26,7 @@ Docker & Docker Compose, Configurable for any cloud provider
 
 ## **🚀 Quick Start**
 ### Prerequisites:
-Node.js (v14 or higher), PostgreSQL, Docker & Docker Compose (optional for containerization)
+Node.js, PostgreSQL, Docker & Docker Compose (optional for containerization)
 
 ### Using Docker
 1. Clone the repository:
@@ -37,11 +37,17 @@ cd online-notepad
 
 2. Create a .env file in the root directory:
 ```
-DB_USER=postgres
-DB_PASSWORD=securepassword
-DB_NAME=notepad
+NODE_ENV=development
+BACKEND_PORT=9001
+DB_HOST=db
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_NAME=your_db_name
+DB_PORT=9002
 JWT_SECRET=your_jwt_secret_key
+JWT_EXPIRY=15m
 JWT_REFRESH_TOKEN_SECRET=your_refresh_token_secret
+REFRESH_TOKEN_EXPIRY=7d
 ```
 
 3. Build and start the containers:
@@ -49,7 +55,7 @@ JWT_REFRESH_TOKEN_SECRET=your_refresh_token_secret
 docker-compose up -d
 ```
 
-4. Access the application at http://localhost:6000
+4. Access the application at http://localhost:9000
 
 ### Manual Setup
 #### Backend Setup
@@ -66,11 +72,12 @@ npm install
 3. Create a .env file:
 ```
 NODE_ENV=development
-BACKEND_PORT=6001
-DB_HOST=localhost
-DB_USER=postgres
-DB_PASSWORD=your_password
-DB_NAME=notepad
+BACKEND_PORT=9001
+DB_HOST=your_db_ip
+DB_USER=your_db_username
+DB_PASSWORD=your_db_password
+DB_NAME=your_db_name
+DB_PORT=your_db_port
 JWT_SECRET=your_jwt_secret_key
 JWT_EXPIRY=15m
 JWT_REFRESH_TOKEN_SECRET=your_refresh_token_secret
@@ -93,12 +100,7 @@ cd client
 npm install
 ```
 
-3. Create a .env file:
-```
-VITE_API_URL=http://localhost:6001/api
-```
-
-4. Start the client:
+3. Start the client:
 ```bash
 npm run dev
 ```
