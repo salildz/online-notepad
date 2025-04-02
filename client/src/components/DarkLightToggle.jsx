@@ -1,8 +1,10 @@
-// DarkLightToggle.js
 import { Box } from "@mui/material";
 import { DarkMode, LightMode } from "@mui/icons-material";
+import { useTheme } from "./ThemeContext";
 
-function DarkLightToggle({ mode, toggleMode }) {
+function DarkLightToggle() {
+  const { mode, toggleMode } = useTheme();
+
   return (
     <Box
       sx={{
@@ -21,7 +23,6 @@ function DarkLightToggle({ mode, toggleMode }) {
           borderRadius: "17px",
           position: "relative",
           cursor: "pointer",
-
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -31,7 +32,6 @@ function DarkLightToggle({ mode, toggleMode }) {
         <DarkMode
           sx={{
             fontSize: "16px",
-            // highlight the icon if we're in dark mode, else dim it
             color: mode === "dark" ? "#fff" : "#888",
             transition: "color 1s",
           }}
