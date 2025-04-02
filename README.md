@@ -55,7 +55,7 @@ REFRESH_TOKEN_EXPIRY=7d
 docker-compose up -d
 ```
 
-4. Access the application at http://localhost:6000
+4. Access the application at http://localhost:9000
 
 ### Manual Setup
 #### Backend Setup
@@ -73,11 +73,11 @@ npm install
 ```
 NODE_ENV=development
 BACKEND_PORT=9001
-DB_HOST=db
-DB_USER=your_username
-DB_PASSWORD=your_password
+DB_HOST=your_db_ip
+DB_USER=your_db_username
+DB_PASSWORD=your_db_password
 DB_NAME=your_db_name
-DB_PORT=9002
+DB_PORT=your_db_port
 JWT_SECRET=your_jwt_secret_key
 JWT_EXPIRY=15m
 JWT_REFRESH_TOKEN_SECRET=your_refresh_token_secret
@@ -100,12 +100,7 @@ cd client
 npm install
 ```
 
-3. Create a .env file:
-```
-VITE_API_URL=http://localhost:6001/api
-```
-
-4. Start the client:
+3. Start the client:
 ```bash
 npm run dev
 ```
