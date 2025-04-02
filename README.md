@@ -26,7 +26,7 @@ Docker & Docker Compose, Configurable for any cloud provider
 
 ## **🚀 Quick Start**
 ### Prerequisites:
-Node.js (v14 or higher), PostgreSQL, Docker & Docker Compose (optional for containerization)
+Node.js, PostgreSQL, Docker & Docker Compose (optional for containerization)
 
 ### Using Docker
 1. Clone the repository:
