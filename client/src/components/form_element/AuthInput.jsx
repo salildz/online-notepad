@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { FormControl, TextField } from "@mui/material";
+import { capitalizeWithExceptions } from "../../utility/TextUtils";
 
 const AuthInput = ({
   id,
@@ -15,20 +16,13 @@ const AuthInput = ({
     <FormControl fullWidth>
       <TextField
         id={id}
-        label={label}
+        label={capitalizeWithExceptions(label)}
         margin="normal"
         value={value}
         onChange={onChangeFunction && ((e) => onChangeFunction(e.target.value))}
         type={type}
         autoComplete={autoComplete}
         autoFocus={autoFocus}
-        slotProps={{
-          inputLabel: {
-            sx: {
-              textTransform: "capitalize",
-            },
-          },
-        }}
       />
     </FormControl>
   );

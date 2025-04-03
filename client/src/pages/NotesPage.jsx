@@ -21,7 +21,6 @@ import {
   updateNote as apiUpdateNote,
   setErrorHandler,
 } from "../components/Api";
-import LogoutButton from "../components/LogoutButton";
 import { useTranslation } from "../../node_modules/react-i18next";
 import { useError } from "../components/ErrorContext";
 import SideMenu from "../components/SideMenu";
@@ -144,7 +143,6 @@ const NotesPage = () => {
         >
           {t("notes.title")}
         </Typography>
-        <LogoutButton />
       </Box>
 
       <Box sx={{ mb: 3, display: "flex", flexDirection: "column", gap: 2 }}>
@@ -205,7 +203,7 @@ const NotesPage = () => {
           return (
             <Grid
               sx={{ height: "auto" }}
-              size={{ xs: 12, sm: 6, md: 4 }}
+              size={{ xs: 12, md: 4 }}
               key={note.id}
             >
               <Card

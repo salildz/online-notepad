@@ -11,6 +11,8 @@ import { useAuth } from "./AuthContext";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { Button } from "@mui/material";
 import { useTranslation } from "../../node_modules/react-i18next";
+import { logoutUser } from "./Api";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -26,8 +28,20 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu() {
-  const { username, email } = useAuth();
+  const { username, email, clearToken } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      clearToken();
+      Navigate("/login");
+    } catch (error) {
+      clearToken();
+      navigate("/login");
+    }
+  };
 
   return (
     <Drawer
@@ -87,6 +101,7 @@ export default function SideMenu() {
           variant="outlined"
           fullWidth
           startIcon={<LogoutRoundedIcon />}
+          onClick={handleLogout}
         >
           {t("auth.logout")}
         </Button>

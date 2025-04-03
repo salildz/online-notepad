@@ -10,10 +10,23 @@ import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import MenuContent from "./MenuContent";
 import { useAuth } from "./AuthContext";
 import { useTranslation } from "../../node_modules/react-i18next";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function SideMenuMobile({ open, toggleDrawer }) {
-  const { username, email } = useAuth();
+  const { username, email, clearToken } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      clearToken();
+      Navigate("/login");
+    } catch (error) {
+      clearToken();
+      navigate("/login");
+    }
+  };
 
   return (
     <Drawer
@@ -67,6 +80,7 @@ function SideMenuMobile({ open, toggleDrawer }) {
             variant="outlined"
             fullWidth
             startIcon={<LogoutRoundedIcon />}
+            onClick={handleLogout}
           >
             {t("auth.logout")}
           </Button>

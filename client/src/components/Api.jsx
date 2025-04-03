@@ -3,11 +3,20 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL || "/api";
 
 let currentToken = localStorage.getItem("accessToken");
+let activeRequests = 0;
+let loadingTimeout = null;
+const LOADING_DELAY = 300;
+const LOADING_TIMEOUT = 30000;
 
 export let showErrorMessage;
+export let setLoadingState;
 
 export const setErrorHandler = (handler) => {
   showErrorMessage = handler;
+};
+
+export const setLoadingHandler = (handler) => {
+  setLoadingState = handler;
 };
 
 export const setAxiosToken = (token) => {
@@ -28,56 +37,57 @@ export const api = axios.create({
     "Content-Type": "application/json",
     "X-Requested-With": "XMLHttpRequest",
   },
+  timeout: LOADING_TIMEOUT,
 });
+
+const updateLoadingState = () => {
+  if (setLoadingState) {
+    if (activeRequests > 0) {
+      if (loadingTimeout) {
+        clearTimeout(loadingTimeout);
+      }
+
+      loadingTimeout = setTimeout(() => {
+        setLoadingState(true);
+      }, LOADING_DELAY);
+    } else {
+      if (loadingTimeout) {
+        clearTimeout(loadingTimeout);
+        loadingTimeout = null;
+      }
+      setLoadingState(false);
+    }
+  }
+};
 
 // Request Interceptor: Add access token to every request
 api.interceptors.request.use(
   (config) => {
+    activeRequests++;
+    updateLoadingState();
     const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    activeRequests = Math.max(0, activeRequests - 1);
+    updateLoadingState();
+    return Promise.reject(error);
+  }
 );
 
-// Refresh access token
-export const refreshAccessToken = async () => {
-  try {
-    const response = await axios.post(
-      `${API_URL}/auth/refresh-token`,
-      {},
-      {
-        withCredentials: true, // send refresh token as cookie
-      }
-    );
-    const newToken = response.data.accessToken;
-    setAxiosToken(newToken);
-    return newToken;
-  } catch (error) {
-    localStorage.removeItem("accessToken");
-    return null;
-  }
-};
-
-let isRefreshing = false;
-let refreshSubscribers = [];
-
-// Continue requests after token refresh
-const onRefreshed = (token) => {
-  refreshSubscribers.forEach((callback) => callback(token));
-  refreshSubscribers = [];
-};
-
-// Add a new request to the queue
-const addSubscriber = (callback) => {
-  refreshSubscribers.push(callback);
-};
-
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    activeRequests = Math.max(0, activeRequests - 1);
+    updateLoadingState();
+    return response;
+  },
   async (error) => {
+    activeRequests = Math.max(0, activeRequests - 1);
+    updateLoadingState();
+
     const originalRequest = error.config;
 
     // If an error occurs while refreshing the token, clear the token and redirect to login page
@@ -135,6 +145,39 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Refresh access token
+export const refreshAccessToken = async () => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/auth/refresh-token`,
+      {},
+      {
+        withCredentials: true, // send refresh token as cookie
+      }
+    );
+    const newToken = response.data.accessToken;
+    setAxiosToken(newToken);
+    return newToken;
+  } catch (error) {
+    localStorage.removeItem("accessToken");
+    return null;
+  }
+};
+
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+// Continue requests after token refresh
+const onRefreshed = (token) => {
+  refreshSubscribers.forEach((callback) => callback(token));
+  refreshSubscribers = [];
+};
+
+// Add a new request to the queue
+const addSubscriber = (callback) => {
+  refreshSubscribers.push(callback);
+};
 
 // Login
 export const loginUser = async (identifier, password) => {

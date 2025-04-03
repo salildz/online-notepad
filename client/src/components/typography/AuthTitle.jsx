@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Typography } from "@mui/material";
+import { capitalizeWithExceptions } from "../../utility/TextUtils";
 
 const AuthTitle = ({ text }) => {
   return (
@@ -9,11 +10,10 @@ const AuthTitle = ({ text }) => {
       sx={{
         fontWeight: "bold",
         mb: 10,
-        textTransform: "capitalize",
         textAlign: "center",
       }}
     >
-      {text}
+      {capitalizeWithExceptions(text)}
     </Typography>
   );
 };

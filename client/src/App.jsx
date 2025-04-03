@@ -10,6 +10,7 @@ import { ThemeProvider, useTheme } from "./components/ThemeContext";
 import RootRedirect from "./components/RootRedirect";
 import NotesPage from "./pages/NotesPage";
 import "./translations/i18n";
+import { LoadingProvider } from "./components/LoadingContext";
 
 function AppContent() {
   const { theme } = useTheme();
@@ -17,34 +18,36 @@ function AppContent() {
   return (
     <MUIThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <LanguageToggle />
-        <DarkLightToggle />
-      </Box>
-      <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={<RootRedirect />}
-          />
-          <Route
-            path="/login"
-            element={<LoginPage />}
-          />
-          <Route
-            path="/register"
-            element={<RegisterPage />}
-          />
-          <Route
-            path="/note"
-            element={<NotesPage />}
-          />
-          <Route
-            path="*"
-            element={<Navigate to="/" />}
-          />
-        </Routes>
-      </Router>
+      <LoadingProvider>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <LanguageToggle />
+          <DarkLightToggle />
+        </Box>
+        <Router>
+          <Routes>
+            <Route
+              path="/"
+              element={<RootRedirect />}
+            />
+            <Route
+              path="/login"
+              element={<LoginPage />}
+            />
+            <Route
+              path="/register"
+              element={<RegisterPage />}
+            />
+            <Route
+              path="/note"
+              element={<NotesPage />}
+            />
+            <Route
+              path="*"
+              element={<Navigate to="/" />}
+            />
+          </Routes>
+        </Router>
+      </LoadingProvider>
     </MUIThemeProvider>
   );
 }
