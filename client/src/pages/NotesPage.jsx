@@ -24,6 +24,8 @@ import {
 import LogoutButton from "../components/LogoutButton";
 import { useTranslation } from "../../node_modules/react-i18next";
 import { useError } from "../components/ErrorContext";
+import SideMenu from "../components/SideMenu";
+import AppNavbar from "../components/AppNavbar";
 
 const NotesPage = () => {
   const { t } = useTranslation();
@@ -125,6 +127,8 @@ const NotesPage = () => {
 
   return (
     <Container maxWidth="lg">
+      <SideMenu />
+      <AppNavbar />
       <Box
         sx={{
           display: "flex",

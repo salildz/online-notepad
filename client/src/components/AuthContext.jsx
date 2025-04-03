@@ -1,21 +1,39 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { refreshAccessToken, setAxiosToken, logoutUser } from "./Api";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext(undefined);
 
 export const AuthProvider = ({ children }) => {
   const [token, setTokenState] = useState(null);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+
+  const extractUserInfo = (newToken) => {
+    if (newToken) {
+      try {
+        const decoded = jwtDecode(newToken);
+        setUsername(decoded.username || "");
+        setEmail(decoded.email || "");
+      } catch (error) {
+        console.error("Token çözümleme hatası:", error);
+      }
+    }
+  };
 
   const setToken = (newToken) => {
     if (newToken) {
       localStorage.setItem("accessToken", newToken);
       setTokenState(newToken);
       setAxiosToken(newToken);
+      extractUserInfo(newToken);
     } else {
       localStorage.removeItem("accessToken");
       setTokenState(null);
       setAxiosToken(null);
+      setUsername("");
+      setEmail("");
     }
   };
 
@@ -35,6 +53,7 @@ export const AuthProvider = ({ children }) => {
         if (storedToken) {
           setTokenState(storedToken);
           setAxiosToken(storedToken);
+          extractUserInfo(storedToken);
           setIsLoading(false);
           return;
         }
@@ -72,7 +91,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  return <AuthContext.Provider value={{ token, setToken, clearToken, isLoading }}>{!isLoading && children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ token, username, email, setToken, clearToken, isLoading }}>
+      {!isLoading && children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

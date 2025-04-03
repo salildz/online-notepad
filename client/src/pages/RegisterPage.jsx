@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { TextField, Button, Container, Typography, Box, FormControl } from "@mui/material";
+import { Button, Typography, FormControl } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser, setErrorHandler } from "../components/Api";
 import { useTranslation } from "../../node_modules/react-i18next";
 import { useError } from "../components/ErrorContext";
+import AuthTitle from "../components/typography/AuthTitle";
+import AuthInput from "../components/form_element/AuthInput";
+import AuthContainer from "../components/container/AuthContainer";
 
 const RegisterPage = () => {
   const { t } = useTranslation();
@@ -27,75 +30,55 @@ const RegisterPage = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          mt: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
+    <AuthContainer>
+      <AuthTitle text={t("auth.registerTitle")} />
+      <FormControl
+        fullWidth
+        component="form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleLogin();
         }}
       >
-        <Typography
-          variant="h3"
-          fontWeight="bold"
-          mb={10}
-          textTransform="capitalize"
-        >
-          {t("auth.registerTitle")}
-        </Typography>
-        <FormControl fullWidth>
-          <TextField
-            id="username"
-            label={t("auth.username")}
-            fullWidth
-            margin="normal"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            type="text"
-            autoComplete="username"
-            autoFocus
-          />
-        </FormControl>
-        <FormControl fullWidth>
-          <TextField
-            id="email"
-            label={t("auth.email")}
-            fullWidth
-            margin="normal"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            autoComplete="email"
-          />
-        </FormControl>
-        <FormControl fullWidth>
-          <TextField
-            id="password"
-            label={t("auth.password")}
-            fullWidth
-            margin="normal"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-          />
-        </FormControl>
+        <AuthInput
+          id={"textField-username"}
+          label={t("auth.username")}
+          value={username}
+          onChangeFunction={setUsername}
+          type={"text"}
+          autoComplete={"username"}
+          autoFocus={true}
+        />
+        <AuthInput
+          id={"textField-email"}
+          label={t("auth.email")}
+          value={email}
+          onChangeFunction={setEmail}
+          type={"email"}
+          autoComplete={"email"}
+        />
+        <AuthInput
+          id={"textField-password"}
+          label={t("auth.password")}
+          value={password}
+          onChangeFunction={setPassword}
+          type={"password"}
+          autoComplete={"password"}
+        />
         <Button
           id="registerButton"
           type="submit"
           variant="contained"
-          fullWidth
           sx={{ mt: 2 }}
           onClick={handleRegister}
         >
           {t("auth.register")}
         </Button>
-        <Typography sx={{ mt: 2 }}>
-          {t("auth.alreadyHaveAccount")} <Link to="/login">{t("auth.login")}</Link>
-        </Typography>
-      </Box>
-    </Container>
+      </FormControl>
+      <Typography sx={{ mt: 2 }}>
+        {t("auth.alreadyHaveAccount")} <Link to="/login">{t("auth.login")}</Link>
+      </Typography>
+    </AuthContainer>
   );
 };
 

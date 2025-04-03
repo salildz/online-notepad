@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { TextField, Button, Container, Typography, Box, FormControl } from "@mui/material";
+import { Button, Typography, FormControl } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { loginUser, setErrorHandler } from "../components/Api";
 import { useAuth } from "../components/AuthContext";
 import { useTranslation } from "../../node_modules/react-i18next";
 import { useError } from "../components/ErrorContext";
+import AuthTitle from "../components/typography/AuthTitle";
+import AuthInput from "../components/form_element/AuthInput";
+import AuthContainer from "../components/container/AuthContainer";
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -30,65 +33,50 @@ const LoginPage = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          mt: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
+    <AuthContainer>
+      <AuthTitle text={t("auth.loginTitle")} />
+      <FormControl
+        fullWidth
+        component="form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleLogin();
         }}
       >
-        <Typography
-          variant="h3"
-          fontWeight="bold"
-          mb={10}
-          textTransform="capitalize"
-        >
-          {t("auth.loginTitle")}
-        </Typography>
-        <FormControl fullWidth>
-          <TextField
-            id="identifier"
-            label={t("auth.emailOrUsername")}
-            margin="normal"
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            type="text"
-            autoComplete={["username", "email"]}
-            autoFocus
-          />
-        </FormControl>
-        <FormControl fullWidth>
-          <TextField
-            id="password"
-            label={t("auth.password")}
-            margin="normal"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            autoComplete="password"
-          />
-        </FormControl>
+        <AuthInput
+          id={"textField-identifier"}
+          label={t("auth.emailOrUsername")}
+          value={identifier}
+          onChangeFunction={setIdentifier}
+          type={"text"}
+          autoComplete={["username", "email"]}
+          autoFocus={true}
+        />
+        <AuthInput
+          id={"textField-password"}
+          label={t("auth.password")}
+          value={password}
+          onChangeFunction={setPassword}
+          type={"password"}
+          autoComplete={"password"}
+        />
         <Button
           id="loginButton"
           type="submit"
           variant="contained"
           sx={{ mt: 2 }}
           onClick={handleLogin}
-          fullWidth
         >
           {t("auth.login")}
         </Button>
-        <Typography
-          id="dontHaveAccount"
-          sx={{ mt: 2 }}
-        >
-          {t("auth.dontHaveAccount")} <Link to="/register">{t("auth.register")}</Link>
-        </Typography>
-      </Box>
-    </Container>
+      </FormControl>
+      <Typography
+        id="dontHaveAccount"
+        sx={{ mt: 2 }}
+      >
+        {t("auth.dontHaveAccount")} <Link to="/register">{t("auth.register")}</Link>
+      </Typography>
+    </AuthContainer>
   );
 };
 

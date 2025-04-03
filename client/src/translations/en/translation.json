@@ -24,7 +24,8 @@
     "dontHaveAccount": "Don't have an account?",
     "register": "Register",
     "registerTitle": "Create an account",
-    "alreadyHaveAccount": "Already have an account?"
+    "alreadyHaveAccount": "Already have an account?",
+    "logout": "Logout"
   },
   "notes": {
     "title": "Notes",
@@ -37,5 +38,11 @@
     "invalidEmail": "Invalid email format",
     "passwordLength": "Password must be at least 6 characters",
     "usernameLength": "Username must be between 3-30 characters"
+  },
+  "sidebar": {
+    "home": "Home",
+    "notes": "Notes",
+    "settings": "Settings",
+    "profileSettings": "Profile Settings"
   }
 }

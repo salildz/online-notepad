@@ -7,13 +7,13 @@ const authenticateToken = require("../middlewares/authMiddleware.js");
 
 const loginLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
-    max: 5, // 5 login attempts per 5 minutes
+    max: 20, // 5 login attempts per 5 minutes
     message: "Too many login attempts. Please try again after 5 minutes."
 });
 
 const registerLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
-    max: 3, // 3 registration attempts per hour
+    max: 10, // 3 registration attempts per hour
     message: "Too many registration attempts. Please try again later."
 });
 

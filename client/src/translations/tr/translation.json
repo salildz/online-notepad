@@ -24,7 +24,8 @@
     "dontHaveAccount": "Hesabın yok mu?",
     "register": "Kayıt Ol",
     "registerTitle": "Hesap oluştur",
-    "alreadyHaveAccount": "Zaten hesabın var mı?"
+    "alreadyHaveAccount": "Zaten hesabın var mı?",
+    "logout": "Çıkış Yap"
   },
   "notes": {
     "title": "Notlar",
@@ -37,5 +38,11 @@
     "invalidEmail": "Geçersiz e-posta formatı",
     "passwordLength": "Şifre en az 6 karakter olmalıdır",
     "usernameLength": "Kullanıcı adı 3-30 karakter arasında olmalıdır"
+  },
+  "sidebar": {
+    "home": "Ana Sayfa",
+    "notes": "Notlar",
+    "settings": "Ayarlar",
+    "profileSettings": "Profil Ayarları"
   }
 }
