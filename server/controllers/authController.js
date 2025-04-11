@@ -1,8 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+const User = require('../models/User');
 const Note = require('../models/Note');
 const { Op } = require('sequelize');
+const { sendVerificationEmail } = require('../services/emailService');
+const crypto = require('crypto');
 
 // Validate Registration - Check if username, email and password are valid
 const validateRegistration = (username, email, password) => {
@@ -30,7 +32,7 @@ const validateRegistration = (username, email, password) => {
 // Register User
 exports.registerUser = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, language } = req.body;
 
         // Validate input
         const validation = validateRegistration(username, email, password);
@@ -48,6 +50,20 @@ exports.registerUser = async (req, res) => {
             }
         });
 
+        if (existingUser) {
+            return res.status(400).json({
+                message: "User already exists",
+                errors: {
+                    email: existingUser.email === email.toLowerCase().trim() ? "Email already in use" : undefined,
+                    username: existingUser.username === username.trim() ? "Username already in use" : undefined
+                }
+            });
+        }
+
+        // Generate verification token
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
         // Hash password with stronger security
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -56,7 +72,10 @@ exports.registerUser = async (req, res) => {
         const newUser = await User.create({
             username: username.trim(),
             email: email.toLowerCase().trim(),
-            password: hashedPassword
+            password: hashedPassword,
+            verificationToken,
+            verificationTokenExpires,
+            isVerified: false
         });
 
         // Create note
@@ -66,12 +85,58 @@ exports.registerUser = async (req, res) => {
             noteData: { notes: [] }
         });
 
-        res.status(201).json({ message: "User registered successfully." });
+        // Send verification email
+        const emailSent = await sendVerificationEmail(email.toLowerCase().trim(), verificationToken, language);
+
+        if (emailSent) {
+            res.status(201).json({
+                message: "User registered successfully. Please check your email to verify your account."
+            });
+        } else {
+            // Even if email fails, user is registered
+            res.status(201).json({
+                message: "User registered successfully, but verification email could not be sent. Please contact support."
+            });
+        }
     } catch (error) {
         console.error("Register error:", error);
         res.status(500).json({ message: "An error occurred during registration." });
     }
 };
+
+// Verify email
+exports.verifyEmail = async (req, res) => {
+    try {
+        const { token } = req.body;
+
+        if (!token) {
+            return res.status(400).json({ message: "Token is required" });
+        }
+
+        const user = await User.findOne({
+            where: {
+                verificationToken: token,
+                verificationTokenExpires: { [Op.gt]: new Date() }
+            }
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: "Invalid or expired verification token" });
+        }
+
+        // Update user as verified
+        user.isVerified = true;
+        user.verificationToken = null;
+        user.verificationTokenExpires = null;
+        await user.save();
+
+        return res.status(200).json({ message: "Email verified successfully. You can now log in." });
+    } catch (error) {
+        console.error('Email verification error:', error);
+        res.status(500).json({ message: "An error occurred during email verification" });
+    }
+};
+
 
 exports.loginUser = async (req, res) => {
     try {
@@ -81,7 +146,6 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: "Please provide all required fields." });
         }
 
-        // Find user with case-insensitive search
         const user = await User.findOne({
             where: {
                 [Op.or]: [
@@ -101,7 +165,12 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials." });
         }
 
-        // Create JWT with appropriate secrets and expiry
+        // Check if email is verified
+        if (!user.isVerified) {
+            return res.status(401).json({ message: "Please verify your email before logging in." });
+        }
+
+        // Create JWT tokens
         const accessToken = jwt.sign(
             { id: user.id, username: user.username, email: user.email },
             process.env.JWT_SECRET,
@@ -118,20 +187,17 @@ exports.loginUser = async (req, res) => {
         user.refreshToken = refreshToken;
         await user.save();
 
-        // Cookie options
-        const cookieOptions = {
-            httpOnly: true, // Client-side JS cannot access
-            expires: new Date(Date.now() + (7 * 24 * 60 * 60 * 1000)), // 7 days
-            secure: process.env.NODE_ENV === "production", // HTTPS only in production
-            sameSite: 'strict', // CSRF protection
-            path: '/' // Available on all paths
-        };
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
 
-        res.cookie("refreshToken", refreshToken, cookieOptions);
         return res.status(200).json({ accessToken });
     } catch (error) {
-        console.error("Login error:", error);
-        return res.status(500).json({ message: "An error occurred during login." });
+        console.error('Login error:', error);
+        res.status(500).json({ message: "An error occurred during login." });
     }
 };
 

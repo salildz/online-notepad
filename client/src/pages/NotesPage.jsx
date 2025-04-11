@@ -19,9 +19,8 @@ import {
   addNote as apiAddNote,
   deleteNote as apiDeleteNote,
   updateNote as apiUpdateNote,
-  setErrorHandler,
 } from "../components/Api";
-import { useTranslation } from "../../node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import { useError } from "../components/ErrorContext";
 import SideMenu from "../components/SideMenu";
 import AppNavbar from "../components/AppNavbar";
@@ -37,9 +36,9 @@ const NotesPage = () => {
   const [editMode, setEditMode] = useState(false);
   const theme = useTheme();
 
-  useEffect(() => {
+  /*   useEffect(() => {
     setErrorHandler(showError);
-  }, [showError]);
+  }, [showError]); */
 
   const fetchNotes = async () => {
     try {
@@ -125,156 +124,159 @@ const NotesPage = () => {
   }, []);
 
   return (
-    <Container maxWidth="lg">
+    <Box sx={{ display: "flex" }}>
       <SideMenu />
-      <AppNavbar />
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mt: 4,
-          mb: 3,
-        }}
-      >
-        <Typography
-          variant="h4"
-          sx={{ fontWeight: "bold" }}
-        >
-          {t("notes.title")}
-        </Typography>
-      </Box>
 
-      <Box sx={{ mb: 3, display: "flex", flexDirection: "column", gap: 2 }}>
-        <TextField
-          label={t("common.title")}
-          fullWidth
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <TextField
-          label={t("common.content")}
-          fullWidth
-          multiline
-          rows={4}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          color={editMode ? "success" : "primary"}
-          fullWidth
-          size="large"
-          onClick={editMode ? updateNote : addNote}
+      <Container maxWidth="lg">
+        <AppNavbar />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mt: 4,
+            mb: 3,
+          }}
         >
-          {editMode ? t("notes.saveNote") : t("notes.saveNote")}
-        </Button>
-        {editMode && (
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: "bold" }}
+          >
+            {t("notes.title")}
+          </Typography>
+        </Box>
+
+        <Box sx={{ mb: 3, display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField
+            label={t("common.title")}
+            fullWidth
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <TextField
+            label={t("common.content")}
+            fullWidth
+            multiline
+            rows={4}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
           <Button
             variant="contained"
-            color="error"
+            color={editMode ? "success" : "primary"}
             fullWidth
             size="large"
-            onClick={handleCancel}
+            onClick={editMode ? updateNote : addNote}
           >
-            {t("common.cancel")}
+            {editMode ? t("notes.saveNote") : t("notes.saveNote")}
           </Button>
-        )}
-      </Box>
-      {notesList.length === 0 && (
-        <Typography
-          align="center"
-          color="textSecondary"
-          sx={{ mt: 4 }}
-        >
-          {t("notes.noNotes")}
-        </Typography>
-      )}
-      <Grid
-        container
-        spacing={3}
-        sx={{
-          flexDirection: "center",
-        }}
-      >
-        {notesList.map((note) => {
-          const isExpanded = expandedNoteId === note.id;
-          const shouldShowExpandButton = note.content.length > 25 || note.title.length > 17;
-          return (
-            <Grid
-              sx={{ height: "auto" }}
-              size={{ xs: 12, md: 4 }}
-              key={note.id}
+          {editMode && (
+            <Button
+              variant="contained"
+              color="error"
+              fullWidth
+              size="large"
+              onClick={handleCancel}
             >
-              <Card
-                sx={{ height: "auto", borderRadius: 3 }}
-                raised
+              {t("common.cancel")}
+            </Button>
+          )}
+        </Box>
+        {notesList.length === 0 && (
+          <Typography
+            align="center"
+            color="textSecondary"
+            sx={{ mt: 4 }}
+          >
+            {t("notes.noNotes")}
+          </Typography>
+        )}
+        <Grid
+          container
+          spacing={3}
+          sx={{
+            flexDirection: "center",
+          }}
+        >
+          {notesList.map((note) => {
+            const isExpanded = expandedNoteId === note.id;
+            const shouldShowExpandButton = note.content.length > 25 || note.title.length > 17;
+            return (
+              <Grid
+                sx={{ height: "auto" }}
+                size={{ xs: 12, md: 4 }}
+                key={note.id}
               >
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography
-                    variant="h6"
-                    noWrap={!isExpanded}
-                    color="primary"
-                    sx={{ fontWeight: "bold", wordBreak: "break-word" }}
-                  >
-                    {note.title}
-                  </Typography>
-                  <Collapse
-                    in={isExpanded}
-                    collapsedSize={20}
-                    timeout={600}
-                  >
+                <Card
+                  sx={{ height: "auto", borderRadius: 3 }}
+                  raised
+                >
+                  <CardContent sx={{ flexGrow: 1 }}>
                     <Typography
-                      variant="body2"
-                      color="textSecondary"
+                      variant="h6"
                       noWrap={!isExpanded}
-                      sx={{
-                        wordBreak: "break-word",
-                      }}
+                      color="primary"
+                      sx={{ fontWeight: "bold", wordBreak: "break-word" }}
                     >
-                      {note.content}
+                      {note.title}
                     </Typography>
-                  </Collapse>
-                </CardContent>
+                    <Collapse
+                      in={isExpanded}
+                      collapsedSize={20}
+                      timeout={600}
+                    >
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        noWrap={!isExpanded}
+                        sx={{
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {note.content}
+                      </Typography>
+                    </Collapse>
+                  </CardContent>
 
-                <CardActions>
-                  <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-                    <Box>
-                      <IconButton onClick={() => handleEditClick(note)}>
-                        <Edit
-                          color="grey"
-                          sx={{
-                            "&:hover": {
-                              color: theme.palette.success[theme.palette.mode],
-                            },
-                          }}
-                        />
-                      </IconButton>
-                      <IconButton onClick={() => deleteNote(note.id)}>
-                        <Delete
-                          color="grey"
-                          sx={{
-                            "&:hover": {
-                              color: theme.palette.error[theme.palette.mode],
-                            },
-                          }}
-                        />
-                      </IconButton>
+                  <CardActions>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                      <Box>
+                        <IconButton onClick={() => handleEditClick(note)}>
+                          <Edit
+                            color="grey"
+                            sx={{
+                              "&:hover": {
+                                color: theme.palette.success[theme.palette.mode],
+                              },
+                            }}
+                          />
+                        </IconButton>
+                        <IconButton onClick={() => deleteNote(note.id)}>
+                          <Delete
+                            color="grey"
+                            sx={{
+                              "&:hover": {
+                                color: theme.palette.error[theme.palette.mode],
+                              },
+                            }}
+                          />
+                        </IconButton>
+                      </Box>
+
+                      {shouldShowExpandButton && (
+                        <IconButton onClick={() => handleNoteClick(note.id)}>
+                          {isExpanded ? <ExpandLess /> : <ExpandMore />}
+                        </IconButton>
+                      )}
                     </Box>
-
-                    {shouldShowExpandButton && (
-                      <IconButton onClick={() => handleNoteClick(note.id)}>
-                        {isExpanded ? <ExpandLess /> : <ExpandMore />}
-                      </IconButton>
-                    )}
-                  </Box>
-                </CardActions>
-              </Card>
-            </Grid>
-          );
-        })}
-      </Grid>
-    </Container>
+                  </CardActions>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

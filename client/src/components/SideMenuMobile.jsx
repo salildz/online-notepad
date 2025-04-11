@@ -9,12 +9,12 @@ import Typography from "@mui/material/Typography";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import MenuContent from "./MenuContent";
 import { useAuth } from "./AuthContext";
-import { useTranslation } from "../../node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 
 function SideMenuMobile({ open, toggleDrawer }) {
   const { username, email, clearToken } = useAuth();
-  const { t } = useTranslation();
+  const { t } = useTranslation(["translation", "serverErrors"]);
   const navigate = useNavigate();
 
   const handleLogout = async () => {

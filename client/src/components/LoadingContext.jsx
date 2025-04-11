@@ -1,31 +1,36 @@
-import { Box, CircularProgress, Backdrop } from "@mui/material";
-import { createContext, useContext, useEffect, useState } from "react";
-import { setLoadingHandler } from "./Api";
+import { createContext, useContext, useState, useEffect } from "react";
+import { Backdrop, CircularProgress } from "@mui/material";
 
-const LoadingContext = createContext(null);
+const LoadingContext = createContext();
 
 export const LoadingProvider = ({ children }) => {
-  const [flag, setFlag] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
+  // Delay spinner for better UX (300ms)
   useEffect(() => {
-    setLoadingHandler(setFlag);
-  }, []);
+    let timer;
+    if (isLoading) {
+      timer = setTimeout(() => setVisible(true), 300);
+    } else {
+      setVisible(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   return (
-    <LoadingContext.Provider value={{ isLoading: flag, setLoading: setFlag }}>
+    <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
       {children}
-      {flag && (
-        <Backdrop
-          open={flag}
-          sx={{
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-            color: "#fff",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      )}
+      <Backdrop
+        open={visible}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          color: "#fff",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </LoadingContext.Provider>
   );
 };

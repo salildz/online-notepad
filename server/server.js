@@ -99,8 +99,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
-app.use((req, res) => {
+// 404 Not Found Middleware
+app.use((req, res, next) => {
   res.status(404).json({ message: "Route not found" });
 });
 

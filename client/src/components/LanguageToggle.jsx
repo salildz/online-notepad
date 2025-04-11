@@ -1,6 +1,6 @@
 import { Box, InputAdornment, MenuItem, Select, Typography } from "@mui/material";
 import TranslateIcon from "@mui/icons-material/Translate";
-import { useTranslation } from "../../node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 
 function LanguageToggle() {
   const { i18n } = useTranslation();
@@ -37,8 +37,8 @@ function LanguageToggle() {
           },
         }}
       >
-        <MenuItem value="tr-TR">Türkçe</MenuItem>
-        <MenuItem value="en-US">English</MenuItem>
+        <MenuItem value="tr">Türkçe</MenuItem>
+        <MenuItem value="en">English</MenuItem>
       </Select>
     </Box>
   );

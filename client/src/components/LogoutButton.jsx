@@ -2,10 +2,10 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "./Api";
 import { useAuth } from "./AuthContext";
-import { useTranslation } from "../../node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 
 const LogoutButton = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["translation", "serverErrors"]);
   const navigate = useNavigate();
   const { clearToken } = useAuth();
 

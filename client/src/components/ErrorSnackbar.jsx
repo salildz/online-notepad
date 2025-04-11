@@ -1,10 +1,10 @@
 import { useState, forwardRef, useImperativeHandle } from "react";
 import { Snackbar, Alert } from "@mui/material";
-import { useTranslation } from "../../node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 
 // Create a context to manage the Snackbar globally
 const ErrorSnackbar = forwardRef((props, ref) => {
-  const { t } = useTranslation(["serverErrors", "translation"]);
+  const { t } = useTranslation(["translation", "serverErrors"]);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("error");
@@ -19,19 +19,30 @@ const ErrorSnackbar = forwardRef((props, ref) => {
   // Translate error messages from the server
   const translateErrorMessage = (message) => {
     // Check if the message is a known error key in our translations
-    if (message.startsWith("auth.") || message.startsWith("notes.") || message.startsWith("server.")) {
-      return t(message);
-    }
+    //alert("orijinal mesaj:" + message);
 
+    if (
+      message.startsWith("auth.") ||
+      message.startsWith("notes.") ||
+      message.startsWith("server.")
+    ) {
+      return t(message, { ns: "serverErrors" });
+    }
     // Map common server error messages to our translation keys
+    if (message.includes("Validation error")) {
+      return t("auth.invalidCredentials", { ns: "serverErrors" });
+    }
     if (message.includes("Invalid credentials")) {
-      return t("auth.invalidCredentials");
+      return t("auth.invalidCredentials", { ns: "serverErrors" });
+    }
+    if (message.includes("Too many")) {
+      return t("auth.tooManyRequests", { ns: "serverErrors" });
     }
     if (message.includes("User already exists")) {
-      return t("auth.userExists");
+      return t("auth.userExists", { ns: "serverErrors" });
     }
     if (message.includes("Notes not found")) {
-      return t("notes.notFound");
+      return t("notes.notFound", { ns: "serverErrors" });
     }
 
     // Return the original message if no translation is found
@@ -63,8 +74,17 @@ const ErrorSnackbar = forwardRef((props, ref) => {
   }));
 
   return (
-    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "left" }}>
-      <Alert onClose={handleClose} severity={severity} sx={{ width: "100%" }}>
+    <Snackbar
+      open={open}
+      autoHideDuration={6000}
+      onClose={handleClose}
+      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+    >
+      <Alert
+        onClose={handleClose}
+        severity={severity}
+        sx={{ width: "100%" }}
+      >
         {message}
       </Alert>
     </Snackbar>

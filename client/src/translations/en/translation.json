@@ -25,7 +25,16 @@
     "register": "Register",
     "registerTitle": "Create an account",
     "alreadyHaveAccount": "Already have an account?",
-    "logout": "Logout"
+    "logout": "Logout",
+    "emailVerification": "Email Verification",
+    "noVerificationToken": "Verification token not found",
+    "verificationError": "An error occurred during verification",
+    "redirectingToLogin": "Redirecting to login page...",
+    "backToLogin": "Back to Login",
+    "loginFailed": "Login failed. Please check your credentials.",
+    "verifyEmail": "Please verify your email before logging in.",
+    "registrationFailed": "Registration failed. Please try again.",
+    "verifyEmailAfterRegister": "Registration successful! Please check your email to verify your account."
   },
   "notes": {
     "title": "Notes",

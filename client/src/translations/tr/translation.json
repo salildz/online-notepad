@@ -25,7 +25,16 @@
     "register": "Kayıt Ol",
     "registerTitle": "Hesap oluştur",
     "alreadyHaveAccount": "Zaten hesabın var mı?",
-    "logout": "Çıkış Yap"
+    "logout": "Çıkış Yap",
+    "emailVerification": "E-posta Doğrulama",
+    "noVerificationToken": "Doğrulama tokeni bulunamadı",
+    "verificationError": "Doğrulama sırasında bir hata oluştu",
+    "redirectingToLogin": "Giriş sayfasına yönlendiriliyor...",
+    "backToLogin": "Giriş Sayfasına Dön",
+    "loginFailed": "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.",
+    "verifyEmail": "Lütfen giriş yapmadan önce e-posta adresinizi doğrulayın.",
+    "registrationFailed": "Kayıt başarısız. Lütfen tekrar deneyin.",
+    "verifyEmailAfterRegister": "Kayıt başarılı! Lütfen hesabınızı doğrulamak için e-postanızı kontrol edin."
   },
   "notes": {
     "title": "Notlar",

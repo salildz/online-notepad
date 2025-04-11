@@ -5,7 +5,8 @@
     "registrationFailed": "Registration failed. Please try again.",
     "loginFailed": "Login failed. Please check your credentials.",
     "tokenExpired": "Your session has expired. Please login again.",
-    "unauthorized": "Unauthorized access. Please login again."
+    "unauthorized": "Unauthorized access. Please login again.",
+    "tooManyRequests": "Too many requests. Please try again later."
   },
   "notes": {
     "notFound": "Notes not found!",

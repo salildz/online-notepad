@@ -10,7 +10,7 @@ import MenuContent from "./MenuContent";
 import { useAuth } from "./AuthContext";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { Button } from "@mui/material";
-import { useTranslation } from "../../node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import { logoutUser } from "./Api";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -29,7 +29,7 @@ const Drawer = styled(MuiDrawer)({
 
 export default function SideMenu() {
   const { username, email, clearToken } = useAuth();
-  const { t } = useTranslation();
+  const { t } = useTranslation(["translation", "serverErrors"]);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -45,13 +45,16 @@ export default function SideMenu() {
 
   return (
     <Drawer
-      variant="permanent"
       sx={{
-        display: { xs: "none", md: "block" },
-        [`& .${drawerClasses.paper}`]: {
-          backgroundColor: "background.paper",
+        width: drawerWidth,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
+          width: drawerWidth,
+          boxSizing: "border-box",
         },
       }}
+      variant="permanent"
+      anchor="left"
     >
       <Stack
         direction="row"

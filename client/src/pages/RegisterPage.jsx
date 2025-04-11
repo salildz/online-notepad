@@ -1,31 +1,29 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Typography, FormControl } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
-import { registerUser, setErrorHandler } from "../components/Api";
-import { useTranslation } from "../../node_modules/react-i18next";
+import { registerUser } from "../components/Api";
+import { useTranslation } from "react-i18next";
 import { useError } from "../components/ErrorContext";
 import AuthTitle from "../components/typography/AuthTitle";
 import AuthInput from "../components/form_element/AuthInput";
 import AuthContainer from "../components/container/AuthContainer";
 
 const RegisterPage = () => {
-  const { t } = useTranslation();
-  const { showError } = useError();
+  const { t, i18n } = useTranslation();
+  const { showError, showInfo } = useError();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setErrorHandler(showError);
-  }, [showError]);
-
   const handleRegister = async () => {
     try {
-      await registerUser(username, email, password);
-      navigate("/login");
+      const language = i18n.language;
+      await registerUser(username, email, password, language);
+      showInfo(t("auth.verifyEmailAfterRegister"));
+      setTimeout(() => navigate("/login"), 5000); // Redirect after 5 seconds
     } catch (err) {
-      showError("auth.registrationFailed");
+      console.error("Register failed:", err);
     }
   };
 
@@ -37,7 +35,7 @@ const RegisterPage = () => {
         component="form"
         onSubmit={(e) => {
           e.preventDefault();
-          handleLogin();
+          handleRegister();
         }}
       >
         <AuthInput
@@ -70,7 +68,6 @@ const RegisterPage = () => {
           type="submit"
           variant="contained"
           sx={{ mt: 2 }}
-          onClick={handleRegister}
         >
           {t("auth.register")}
         </Button>

@@ -5,7 +5,8 @@
     "registrationFailed": "Kayıt işlemi başarısız oldu. Lütfen tekrar deneyin.",
     "loginFailed": "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.",
     "tokenExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
-    "unauthorized": "Yetkisiz erişim. Lütfen tekrar giriş yapın."
+    "unauthorized": "Yetkisiz erişim. Lütfen tekrar giriş yapın.",
+    "tooManyRequests": "Çok fazla istek yapıldı. Lütfen daha sonra tekrar deneyin."
   },
   "notes": {
     "notFound": "Notlar bulunamadı!",

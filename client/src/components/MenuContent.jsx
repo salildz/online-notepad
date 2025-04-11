@@ -5,7 +5,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
-import { useTranslation } from "../../node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
@@ -18,7 +18,7 @@ import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
 
 export default function MenuContent() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["translation", "serverErrors"]);
 
   const mainListItems = [{ text: `${t("sidebar.notes")}`, icon: <DescriptionRoundedIcon /> }];
 

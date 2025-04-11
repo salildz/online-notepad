@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Button, Typography, FormControl } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { loginUser, setErrorHandler } from "../components/Api";
+import { loginUser } from "../components/Api";
 import { useAuth } from "../components/AuthContext";
-import { useTranslation } from "../../node_modules/react-i18next";
+import { useTranslation } from "react-i18next";
 import { useError } from "../components/ErrorContext";
 import AuthTitle from "../components/typography/AuthTitle";
 import AuthInput from "../components/form_element/AuthInput";
@@ -16,11 +16,12 @@ const LoginPage = () => {
   const { showError } = useError();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
+  /*   useEffect(() => {
     setErrorHandler(showError);
-  }, [showError]);
+  }, [showError]); */
 
   const handleLogin = async () => {
     try {
@@ -28,7 +29,12 @@ const LoginPage = () => {
       setToken(res.accessToken);
       navigate("/note");
     } catch (err) {
-      showError("auth.loginFailed");
+      const errorResponse = err.response?.data?.message || "auth.loginFailed";
+      if (errorResponse === "Please verify your email before logging in.") {
+        showError(t("auth.verifyEmail"));
+      } else {
+        showError(t("auth.loginFailed"));
+      }
     }
   };
 

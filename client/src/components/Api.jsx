@@ -1,23 +1,25 @@
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "/api";
+let activeRequests = 0;
+let showErrorMessage = null;
+let setLoadingFn = null;
+
+export const bindErrorHandler = (fn) => {
+  showErrorMessage = fn;
+};
+
+export const bindLoading = (fn) => {
+  setLoadingFn = fn;
+};
+
+const updateLoading = () => {
+  if (setLoadingFn) {
+    setLoadingFn(activeRequests > 0);
+  }
+};
 
 let currentToken = localStorage.getItem("accessToken");
-let activeRequests = 0;
-let loadingTimeout = null;
-const LOADING_DELAY = 300;
-const LOADING_TIMEOUT = 30000;
-
-export let showErrorMessage;
-export let setLoadingState;
-
-export const setErrorHandler = (handler) => {
-  showErrorMessage = handler;
-};
-
-export const setLoadingHandler = (handler) => {
-  setLoadingState = handler;
-};
 
 export const setAxiosToken = (token) => {
   currentToken = token;
@@ -37,34 +39,14 @@ export const api = axios.create({
     "Content-Type": "application/json",
     "X-Requested-With": "XMLHttpRequest",
   },
-  timeout: LOADING_TIMEOUT,
+  timeout: 30000,
 });
-
-const updateLoadingState = () => {
-  if (setLoadingState) {
-    if (activeRequests > 0) {
-      if (loadingTimeout) {
-        clearTimeout(loadingTimeout);
-      }
-
-      loadingTimeout = setTimeout(() => {
-        setLoadingState(true);
-      }, LOADING_DELAY);
-    } else {
-      if (loadingTimeout) {
-        clearTimeout(loadingTimeout);
-        loadingTimeout = null;
-      }
-      setLoadingState(false);
-    }
-  }
-};
 
 // Request Interceptor: Add access token to every request
 api.interceptors.request.use(
   (config) => {
     activeRequests++;
-    updateLoadingState();
+    updateLoading();
     const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -73,7 +55,7 @@ api.interceptors.request.use(
   },
   (error) => {
     activeRequests = Math.max(0, activeRequests - 1);
-    updateLoadingState();
+    updateLoading();
     return Promise.reject(error);
   }
 );
@@ -81,12 +63,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     activeRequests = Math.max(0, activeRequests - 1);
-    updateLoadingState();
+    updateLoading();
     return response;
   },
   async (error) => {
     activeRequests = Math.max(0, activeRequests - 1);
-    updateLoadingState();
+    updateLoading();
 
     const originalRequest = error.config;
 
@@ -209,11 +191,16 @@ export const logoutUser = async () => {
 };
 
 // Register
-export const registerUser = async (username, email, password) => {
+export const registerUser = async (username, email, password, language) => {
   try {
-    await api.post("/auth/register", { username, email, password });
+    await api.post("/auth/register", { username, email, password, language });
   } catch (error) {
     if (showErrorMessage) {
+      console.log(error);
+      console.log(error.response);
+      console.log(error.response.data);
+      console.log(error.response.data.message);
+
       showErrorMessage(error.response?.data?.message || "auth.registrationFailed");
     }
     console.error("Register error:", error.response?.data?.message || error.message);

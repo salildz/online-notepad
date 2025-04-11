@@ -15,5 +15,6 @@ export default defineConfig({
                 ws: true, */
       },
     },
+    allowedHosts: ["notepad.yildizsalih.com"],
   },
 })

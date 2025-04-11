@@ -39,6 +39,7 @@ cd online-notepad
 ```
 NODE_ENV=development
 BACKEND_PORT=9001
+CLIENT_URL=your_frontend_url
 DB_HOST=db
 DB_USER=your_username
 DB_PASSWORD=your_password
@@ -48,6 +49,8 @@ JWT_SECRET=your_jwt_secret_key
 JWT_EXPIRY=15m
 JWT_REFRESH_TOKEN_SECRET=your_refresh_token_secret
 REFRESH_TOKEN_EXPIRY=7d
+SENDGRID_API_KEY=your_sendgrid_api_key_here
+EMAIL_FROM=your-verified-sender@example.com
 ```
 
 3. Build and start the containers:
@@ -73,6 +76,7 @@ npm install
 ```
 NODE_ENV=development
 BACKEND_PORT=9001
+CLIENT_URL=your_frontend_url
 DB_HOST=your_db_ip
 DB_USER=your_db_username
 DB_PASSWORD=your_db_password
@@ -82,6 +86,8 @@ JWT_SECRET=your_jwt_secret_key
 JWT_EXPIRY=15m
 JWT_REFRESH_TOKEN_SECRET=your_refresh_token_secret
 REFRESH_TOKEN_EXPIRY=7d
+SENDGRID_API_KEY=your_sendgrid_api_key_here
+EMAIL_FROM=your-verified-sender@example.com
 ```
 
 4. Start the server:
